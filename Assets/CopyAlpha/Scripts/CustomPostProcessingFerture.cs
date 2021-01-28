@@ -2,7 +2,7 @@
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
-public class PostProcessKeepAlpha : ScriptableRendererFeature
+public class CustomPostProcessingFerture : ScriptableRendererFeature
 {
     class CustomRenderPass : ScriptableRenderPass
     {
@@ -17,11 +17,11 @@ public class PostProcessKeepAlpha : ScriptableRendererFeature
         RenderTextureDescriptor sourceDesc;
         RenderTargetIdentifier targetIdentifier;
 
-        Material copyAlphaMat;
+        Material postProcessMat;
 
         readonly int Prop_AlphaSouce = Shader.PropertyToID("_AlphaSource");
 
-        public CustomRenderPass(Shader copyAlphaShader)
+        public CustomRenderPass()
         {
             m_CameraColorAttachment.Init("_CameraColorTexture");
             m_CameraDepthAttachment.Init("_CameraDepthAttachment");
@@ -29,14 +29,13 @@ public class PostProcessKeepAlpha : ScriptableRendererFeature
             m_OpaqueColor.Init("_CameraOpaqueTexture");
             m_AfterPostProcessColor.Init("_AfterPostProcessTexture");
             m_ColorGradingLut.Init("_InternalGradingLut");
-            if (copyAlphaShader == null)
-                copyAlphaShader = Shader.Find("Shader Graph/Replace Alpha");
-            copyAlphaMat = new Material(copyAlphaShader);
         }
 
-        public void Setup(RenderTexture targetTex)
+        public void Setup(RenderPassEvent targetEvent, RenderTexture targetTex, Material targetMat)
         {
+            renderPassEvent = targetEvent;
             targetIdentifier = new RenderTargetIdentifier(targetTex);
+            postProcessMat = targetMat;
         }
 
         // This method is called before executing the render pass.
@@ -64,7 +63,7 @@ public class PostProcessKeepAlpha : ScriptableRendererFeature
             var cmd = CommandBufferPool.Get("PostProcessCopyAlpha");
             var tmpSource = Shader.PropertyToID("_TmpSource");
             cmd.GetTemporaryRT(tmpSource, sourceDesc);
-            Blit(cmd, m_AfterPostProcessColor.id, tmpSource, copyAlphaMat);
+            Blit(cmd, m_AfterPostProcessColor.id, tmpSource, postProcessMat);
             Blit(cmd, tmpSource, targetIdentifier);
             Blit(cmd, tmpSource, m_AfterPostProcessColor.id);
             cmd.ReleaseTemporaryRT(tmpSource);
@@ -78,24 +77,22 @@ public class PostProcessKeepAlpha : ScriptableRendererFeature
     }
 
     CustomRenderPass m_ScriptablePass;
-
-    [SerializeField] Shader copyAlphaShader;
-    [SerializeField] RenderTexture targetTexture;
-
     public override void Create()
     {
-        m_ScriptablePass = new CustomRenderPass(copyAlphaShader);
-
-        // Configures where the render pass should be injected.
-        m_ScriptablePass.renderPassEvent = RenderPassEvent.AfterRenderingOpaques;
+        m_ScriptablePass = new CustomRenderPass();
     }
 
     // Here you can inject one or multiple render passes in the renderer.
     // This method is called when setting up the renderer once per-camera.
     public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
     {
-        m_ScriptablePass.Setup(targetTexture);
-        m_ScriptablePass.renderPassEvent = RenderPassEvent.AfterRendering;
+        var stack = VolumeManager.instance.stack;
+        var customProcesses = stack.GetComponent<CustomPostProcessing>();
+
+        if (customProcesses == null || !customProcesses.IsActive()) return;
+        var pass = customProcesses.renderPassSetting.value;
+
+        m_ScriptablePass.Setup(pass.passEvent, pass.targetTexture, pass.postProcessMat);
         renderer.EnqueuePass(m_ScriptablePass);
     }
 }

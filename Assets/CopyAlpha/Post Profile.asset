@@ -20,7 +20,7 @@ MonoBehaviour:
     min: 0
   intensity:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 2
     min: 0
   scatter:
     m_OverrideState: 0
@@ -40,6 +40,11 @@ MonoBehaviour:
   highQualityFiltering:
     m_OverrideState: 0
     m_Value: 0
+  skipIterations:
+    m_OverrideState: 0
+    m_Value: 1
+    min: 0
+    max: 16
   dirtTexture:
     m_OverrideState: 0
     m_Value: {fileID: 0}
@@ -47,6 +52,26 @@ MonoBehaviour:
     m_OverrideState: 0
     m_Value: 0
     min: 0
+--- !u!114 &-1121667761554401917
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd83f71dcebeb17438a09385096cbc59, type: 3}
+  m_Name: CustomPostProcessing
+  m_EditorClassIdentifier: 
+  active: 1
+  m_AdvancedMode: 0
+  renderPassSetting:
+    m_OverrideState: 1
+    m_Value:
+      passEvent: 1000
+      targetTexture: {fileID: 8400000, guid: 0a878f7141504c442ad549027087af26, type: 2}
+      postProcessMat: {fileID: 2100000, guid: a7e493ba091a0df42802d242e71bae1e, type: 2}
 --- !u!114 &-328924468300191216
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -85,3 +110,46 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   components:
   - {fileID: -7309498448248283262}
+  - {fileID: -1121667761554401917}
+--- !u!114 &229184084823740355
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2038aec5b033b634c9f8888af471c2dc, type: 3}
+  m_Name: CustomPostProcessVolume
+  m_EditorClassIdentifier: 
+  active: 1
+  <displayName>k__BackingField: 
+  m_AdvancedMode: 0
+  renderPassSetting:
+    m_OverrideState: 1
+    m_Value:
+      passEvent: 0
+      targetTexture: {fileID: 0}
+      postProcessMat: {fileID: 0}
+--- !u!114 &8761180722032838285
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2038aec5b033b634c9f8888af471c2dc, type: 3}
+  m_Name: CustomPostProcess
+  m_EditorClassIdentifier: 
+  active: 0
+  <displayName>k__BackingField: 
+  m_AdvancedMode: 0
+  renderPassSetting:
+    m_OverrideState: 1
+    m_Value:
+      passEvent: 1000
+      targetTexture: {fileID: 8400000, guid: 0a878f7141504c442ad549027087af26, type: 2}
+      postProcessMat: {fileID: 2100000, guid: 61975f2b110b47442ba6596c9a2eb82c, type: 2}
